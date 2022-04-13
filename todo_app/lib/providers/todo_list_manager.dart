@@ -44,8 +44,4 @@ class TodoListManager extends StateNotifier<List<TodoModel>> {
   void remove(TodoModel silinecekTodo) {
     state = state.where((element) => element.id != silinecekTodo.id).toList();
   }
-
-
-  //listede tamamlanmamış olan görevlerin sayısını döndürüyorum
- 
 }

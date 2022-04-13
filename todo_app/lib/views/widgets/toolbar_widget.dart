@@ -4,15 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_app/providers/all_providers.dart';
 
 class ToolBarWidget extends ConsumerWidget {
-  const ToolBarWidget({Key? key}) : super(key: key);
+  ToolBarWidget({Key? key}) : super(key: key);
+  var _currentfilter = TodoListFilter.all;
+
+  Color changeTextColor(TodoListFilter filter) {
+    return _currentfilter == filter ? Colors.purple : Colors.black;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    //yapılmamış olan görevlerimizin sayısını tuttuğumuz değişken
-    int onCompletedTodoCount = ref
-        .watch(todoListProvider)
-        .where((element) => !element.completed)
-        .length;
+    final onCompletedTodoCount = ref.watch(unCompletedTodoCount);
+    _currentfilter = ref.watch(todoListFilter);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -30,15 +32,34 @@ class ToolBarWidget extends ConsumerWidget {
           ),
         ),
         Tooltip(
-          child: TextButton(onPressed: () {}, child: const Text("All")),
+          child: TextButton(
+              style: TextButton.styleFrom(
+                  primary: changeTextColor(TodoListFilter.all)),
+              onPressed: () {
+                ref.read(todoListFilter.notifier).state = TodoListFilter.all;
+              },
+              child: const Text("All")),
           message: "All todos",
         ),
         Tooltip(
-          child: TextButton(onPressed: () {}, child: const Text("Active")),
+          child: TextButton(
+              style: TextButton.styleFrom(
+                  primary: changeTextColor(TodoListFilter.active)),
+              onPressed: () {
+                ref.read(todoListFilter.notifier).state = TodoListFilter.active;
+              },
+              child: const Text("Active")),
           message: "Uncompleted",
         ),
         Tooltip(
-          child: TextButton(onPressed: () {}, child: const Text("Completed")),
+          child: TextButton(
+              style: TextButton.styleFrom(
+                  primary: changeTextColor(TodoListFilter.completed)),
+              onPressed: () {
+                ref.read(todoListFilter.notifier).state =
+                    TodoListFilter.completed;
+              },
+              child: const Text("Completed")),
           message: "Completed",
         )
       ],
